@@ -1,0 +1,24 @@
+resource "aws_db_subnet_group" "team2_backend_subnet_group" {
+  name       = "team2_backend_subnet_group"
+  subnet_ids = ["${aws_subnet.team2_backend_subnet_a.id}", "${aws_subnet.team2_backend_subnet_c.id}", "${aws_subnet.team2_backend_subnet_c.id}"]
+
+  tags {
+    Name = "team2 backend subnet group"
+  }
+}
+
+# Supplised via environment variable.
+variable DATABASE_PASSWORD {}
+
+resource "aws_db_instance" "team2_mysql_database" {
+  allocated_storage    = 5
+  engine               = "mysql"
+  engine_version       = "5.6.27"
+  instance_class       = "db.t2.micro"
+  name                 = "team2database"
+  username             = "team2"
+  password             = "${var.DATABASE_PASSWORD}"
+  db_subnet_group_name = "team2_backend_subnet_group"
+  parameter_group_name = "default.mysql5.6"
+  multi_az             = true
+}
